@@ -11,6 +11,9 @@ app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(cors());
 
+app.get('/', (req, res) => {
+    res.send('THIS IS THE API WEBPAGE');
+});
 app.use('/posts', postsRouter);
 
 const CONNECTION ='mongodb+srv://HarshS1611:gaamabanta@cluster0.c4jr0.mongodb.net/bucketlist?retryWrites=true&w=majority';
