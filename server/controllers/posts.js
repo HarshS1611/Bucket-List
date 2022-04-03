@@ -16,23 +16,17 @@ export const getPosts = async (req, res) => {
 }
 
 export const createPost = async (req, res) => {
+    const post = req.body;
 
     try {
-        const newPostsdb = new postsdb(req.body);
-        await newPostsdb.save();
-        res.status(201).json(newPostsdb);
+        const newpostdb = new postsdb({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
+        await newpostdb.save();
+        res.status(201).json(newpostdb);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ message: error });
     }
 }
-export const getPost = async (req, res) => {
-    try {
-        const postdb = await postsdb.findById(req.params.id);
-        res.status(200).json(postdb);
-    } catch (error) {
-        res.status(404).json({ message: error });
-    }
-}
+
 
 export const updatePost = async (req, res) => {
     try {
@@ -51,18 +45,25 @@ export const updatePost = async (req, res) => {
 }
 
 export const likePost = async (req, res) => {
-    try {
-        const { id } = req.params;
+    const { id } = req.params;
 
-        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
-
-        const post = await postsdb.findById(id);
-
-        const updatedPost = await postsdb.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
-        res.status(200).json(updatedPost);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
+    if (!req.userId) {
+        return res.json({ message: "Unauthenticated" });
     }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+
+    const post = await postsdb.findById(id);
+
+    const index = post.likes.findIndex((id) => id === String(req.userId));
+
+    if (index === -1) {
+        post.likes.push(req.userId);
+    } else {
+        post.likes = post.likes.filter((id) => id !== String(req.userId));
+    }
+    const updatedPost = await postsdb.findByIdAndUpdate(id, post, { new: true });
+    res.status(200).json(updatedPost);
 }
 
 export const deletePost = async (req, res) => {

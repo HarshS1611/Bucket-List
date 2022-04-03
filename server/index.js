@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 
 import postsRouter from './routes/posts.js';
+import usersRouter from './routes/users.js';
 
 const app = express();
 
@@ -15,8 +16,9 @@ app.get('/', (req, res) => {
     res.send('THIS IS THE API WEBPAGE');
 });
 app.use('/posts', postsRouter);
+app.use('/user', usersRouter);
 
-const CONNECTION ='mongodb+srv://HarshS1611:gaamabanta@cluster0.c4jr0.mongodb.net/bucketlist?retryWrites=true&w=majority';
+const CONNECTION = 'mongodb+srv://HarshS1611:gaamabanta@cluster0.c4jr0.mongodb.net/bucketlist?retryWrites=true&w=majority';
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -29,3 +31,4 @@ mongoose.connect(CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true }
         console.log(err);
     });
 
+mongoose.set('useFindAndModify', false);
