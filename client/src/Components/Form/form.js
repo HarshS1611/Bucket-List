@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FileBase from 'react-file-base64';
 
 import useStyles from './styles';
-import { createPost, updatePost } from '../../actions/posts';
+import { createPosts, updatePost } from '../../actions/posts';
 
 const Form = ({ currentid, setCurrentid }) => {
     const [postData, setPostData] = useState({ title: '', message: '', tags: '', selectedFile: '' });
@@ -25,17 +25,24 @@ const Form = ({ currentid, setCurrentid }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(postData)
-        if (currentid === null) {
-            dispatch(createPost({ ...postData, name: user?.result?.name }));
-            
+        if (currentid === 0) {
+            dispatch(createPosts({ ...postData, name: user?.result?.name }));
+
 
         } else {
             dispatch(updatePost(currentid, { ...postData, name: user?.result?.name }));
         }
         clear();
     };
-
+    if (!user?.result?.name) {
+        return (
+            <Paper className={classes.paper}>
+                <Typography variant="h6" align="center">
+                    Please Sign In to create your own memories and like other's memories.
+                </Typography>
+            </Paper>
+        );
+    }
     return (
         <Paper className={classes.paper}>
             <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>

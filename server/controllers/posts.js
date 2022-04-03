@@ -16,9 +16,8 @@ export const getPosts = async (req, res) => {
 }
 
 export const createPost = async (req, res) => {
-    const post = req.body;
-
     try {
+        const post = req.body;
         const newpostdb = new postsdb({ ...post, creator: req.userId, createdAt: new Date().toISOString() });
         await newpostdb.save();
         res.status(201).json(newpostdb);
