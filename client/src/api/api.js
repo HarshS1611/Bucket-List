@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const API = axios.create({ baseURL: 'https://bucketlist-backend16.herokuapp.com/' });
+const API = axios.create({ baseURL: 'https://bucket-list-backend.onrender.com' });
 
 
 API.interceptors.request.use((req) => {
